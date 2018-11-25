@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+
+    
+    <canvas id= "can" width= "500px" height = "500px" >
+
+    </canvas>
+
+
+       
+     
+</body>
+<script>
+
+    class ball
+    {
+        constructor (x , y , radius)
+        {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+           
+        }  
+    }
+
+
+    class wall 
+    {
+        constructor (x , y , height , width)
+        {
+            this.x = x;
+            this.y = y;
+            this.height = height;
+            this.width = width
+        }
+    }
+    
+    let output = document.querySelector('.output');  
+   
+
+    ///////////test /?//////////////////
+    //tablica scian 
+    let tabWall = [];
+    tabWall.push(new wall(60,300,100,100));
+
+    //odwołanie do canvasa
+    let canvasElem = document.querySelector('#can');
+    let ctx = canvasElem.getContext('2d');
+    
+    drawWall(tabWall);
+
+
+
+    //////////////////////////////////
+    //funkcja odpowiedzialna za rysowanie scian
+    function drawWall(_tabWall  )
+    {
+    ctx.beginPath();
+    ctx.rect(_tabWall[0].x, _tabWall[0].y, _tabWall[0].width, _tabWall[0].height);
+    ctx.fillStyle = "red";
+    ctx.fill();
+
+    }
+
+    //////////////////////////////!!!!!!!!!!!!!!!!!!!!!!!
+    
+    let Ball = new ball(40,40,10)
+
+    let moveX =0;
+    let moveY =0;
+    
+    function handleOrientation(event) {
+        let y = event.beta;  // In degree in the range [-180,180]
+        let x = event.gamma; // In degree in the range [-90,90]
+        // Because we don't want to have the device upside down
+        // We constrain the x value to the range [-90,90]
+        if (x > 90) { x = 90 };
+        if (x < -90) { x = -90 };
+        moveX = x/90;
+        moveY = y/60;
+
+    }
+    window.addEventListener('deviceorientation', handleOrientation);
+
+    //funkcja odpowiedzialna za przesuwanie i rysowanie kuli 
+    function moveBall(_Ball , _moveX , _moveY)
+    {   
+        //czyszczenie poprzedniej piłki 
+        ctx.clearRect( _Ball.x-_Ball.radius-1,_Ball.y-_Ball.radius-1,_Ball.radius*2+2,_Ball.radius*2+2);
+
+        //rysowanie nowej piłki
+        ctx.beginPath();
+        ctx.fillStyle = "rgb(0,0,0)";
+        _Ball.x+=_moveX;
+        _Ball.y+=_moveY;
+        ctx.arc( _Ball.x,_Ball.y,_Ball.radius,0,360*Math.PI/180);
+        ctx.fill();
+        ctx.closePath(); 
+       
+    }  
+    //odpowieada za odpalanie funkcji moveBall co 5 ms , dzieki czemu  piłka porusza się cały czas w odpowiednim kierunku
+    
+ 
+    
+
+        setInterval(()=> 
+        
+        {
+            
+            if(Ball.y + Ball.radius+1 >= tabWall[0].y & Ball.x == Ball.x +moveX  )
+            {
+                
+                if(Ball.x  + Ball.radius +1 <= tabWall[0].x  & Ball.x < Ball.x +moveX)
+                moveBall(Ball,0,moveY); 
+                if(Ball.x  - Ball.radius -1 >= tabWall[0].x  & Ball.x > Ball.x +moveX)
+                moveBall(Ball,0,moveY);
+                else
+                moveBall(Ball,moveX,0); 
+            }
+            else
+            {
+               
+                moveBall(Ball,moveX,moveY);
+           }
+            
+
+           
+           
+
+           // if(Ball.x + Ball.radius+1 <= tabWall[0].x | Ball.x + Ball.radius+1 >= tabWall[0].x+tabWall[0].width)
+           // {
+          //      moveBall(Ball,moveX,moveY); 
+          //  }
+           // else
+           // moveBall(Ball,0,moveY); 
+            
+        }
+         
+            
+            
+            ,5);
+        
+    
+</script>
+</html>
