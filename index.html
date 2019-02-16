@@ -49,7 +49,38 @@
 </body>
 <script>
 
-    
+    class StopWatch
+    {
+        //selector id np "#dad" , class ".dsd"
+        constructor (selctor)
+        {
+            this.miliSecond = 0;
+            this.timeCounter = null;
+            this.selctor = document.querySelector("#time p");
+        }
+        
+
+        /// kontynuje odlicznie 
+        Start()
+        {
+           this.timeCounter = setInterval(()=> {  this.selctor.innerHTML = ++this.miliSecond;  }, 100);
+           
+           
+        }
+        //zaczymuje stoper
+        Stop()
+        {
+            clearInterval(this.timeCounte);
+        }
+        //resetuje stoper
+        Reset()
+        {
+            this.miliSecond = 0;
+        }
+        
+
+     
+    }
 
 
     class ball
@@ -143,22 +174,15 @@
                         [1, 2,2,2,1,1,2,1,1,2,0,0,1,0,1],
                         [1, 1,1,1,1,1,2,2,1,10,1,1,1,1,1],
                         [1, 0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                        [1, 0,3,1,0,0,0,0,0,0,0,0,0,4,0],
+                        [1, 0,3,1,0,0,0,8,8,0,0,0,0,4,0],
                         
                       ];
    
     // czas ////////////////////////////////////////////
-    let timeStart = new Date();
-    //zegar
-    setInterval(()=>
-    {
-        
-        let timeNow  = new Date()
+    let stopWatch = new StopWatch();
     
-        document.querySelector("#time p").innerHTML = parseInt((timeNow.getTime()-timeStart.getTime())/100) ;
-    },1)
     ///////////////////////////////////////////////////
-
+    
 
     
     
@@ -197,9 +221,20 @@
            /// wczytanie pierwszego poziomu
             document.querySelector("#Level1").addEventListener("click", () => {
 
-                
+                stopWatch.Start("#time p");
                 CreateMap(mapa1);
                 document.querySelector("#Menu").style.display = "none";
+                //sprawdzanie czy gracz zdobył wszystkie punkty
+                let dsaw =  setInterval(()=>
+                {
+                    console.log(tabCoin.length);
+                    if(tabCoin.length==0)
+                    {
+                        stopWatch.Stop();
+                        document.querySelector("#End").style.display = "flex";
+                        clearInterval(dsaw);
+                    }
+                },1000)
             })
 
             ////wczytanie drugiego poziomu
@@ -249,8 +284,7 @@
                 moveY =-1; moveX = 0;
             }
         }
-        
-      
+
 
     }
 
@@ -310,7 +344,7 @@
         tabElement.push(new Element(0,0,5,450 ,"wall"));
         tabElement.push(new Element(0,0,450,5,"wall"));
         tabElement.push(new Element(447,0,450,5,"wall"));
-         tabElement.push(new Element(0,447,5,450,"wall"));
+        tabElement.push(new Element(0,447,5,450,"wall"));
        
         
 
@@ -326,7 +360,7 @@
                     break;
                     case 10 :  tabElement.push(new Element(30*j,30*i,30,12 ,"wall"));
                     break;
-                    case 2:  tabCoin.push(new Element((30*j)+10,(30*i)+10,10,10 ,"coin","yellow","circle"));
+                    case 8:  tabCoin.push(new Element((30*j)+10,(30*i)+10,10,10 ,"coin","yellow","circle"));
                     break;
                     case 3: ExtraElement.push(new Element((30*j)+10,(30*i)+10,10,10 ,"zmniejsz","red","circle"));
                     break;
@@ -403,8 +437,7 @@
     {
         
         let canvasData = ctx.getImageData(0, 0, canvasElem.width, canvasElem.height);
-        console.log(canvasData.data[((((Ball.y+12)*canvasElem.width)+Ball.x))*4+1] );
-
+    
        //funkcja dopowiedzialna za wykrywanie kolizji ze ścianami i blokowanie poruszania się w odpowiednim kierunku
        if ((isOverColision(Ball,canvasData))||(isUnderColision(Ball,canvasData))||(isLeftColision(Ball,canvasData))||(isRightColision(Ball,canvasData))) {
             if (isOverColision(Ball,canvasData)) {
