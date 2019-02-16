@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
@@ -15,6 +16,13 @@
             <li><input type="button" id = "Level1" value="Level 1"></li>
             <li><input type="button" id = "Level2" value="Level 2"></li>
         </ul>
+
+    </div>
+
+    <div id = "End">
+
+        <h3>End</h3>
+        <p id= "Statistics">Time 10:203 s</p>
 
     </div>
     
@@ -176,11 +184,11 @@
     let moveX =0;
     let moveY =0;
     //ilość zdobytych punktów
-    let score = 0;
+    let coin = 0;
     //tablica elementow ścian
     let tabElement = []; 
     //tablica punktów do zbierania
-    let tabScore = [];
+    let tabCoin= [];
     //tablica zawierajoca dodatkowe elementy np   zmniejszanie i zwiekszanie kulki
     let ExtraElement = [];
 
@@ -318,7 +326,7 @@
                     break;
                     case 10 :  tabElement.push(new Element(30*j,30*i,30,12 ,"wall"));
                     break;
-                    case 2:  tabScore.push(new Element((30*j)+10,(30*i)+10,10,10 ,"coin","yellow","circle"));
+                    case 2:  tabCoin.push(new Element((30*j)+10,(30*i)+10,10,10 ,"coin","yellow","circle"));
                     break;
                     case 3: ExtraElement.push(new Element((30*j)+10,(30*i)+10,10,10 ,"zmniejsz","red","circle"));
                     break;
@@ -339,9 +347,9 @@
             tabElement[i].drawElement(ctx);
         }
         //rysowanie punktów
-        for(let i =0  ; i < tabScore.length ; i++)
+        for(let i =0  ; i < tabCoin.length ; i++)
         {
-        tabScore[i].drawElement(ctx);
+            tabCoin[i].drawElement(ctx);
         }
         // rysowanie dodatkowych rzeczy
         for(let i =0  ; i < ExtraElement.length ; i++)
@@ -422,13 +430,13 @@
         
        //// funkcja wykrywająca kolizje z monetami
         
-            for(let i =0; i <tabScore.length ; i++)
-            if(Ball.isColision(tabScore[i]))
+            for(let i =0; i <tabCoin.length ; i++)
+            if(Ball.isColision(tabCoin[i]))
             {
-            console.log("score");
-            tabScore[i].RemoveItem(ctx)
-            score++;
-            tabScore.splice(i,1);
+            
+            tabCoin[i].RemoveItem(ctx)
+            coin++;
+            tabCoin.splice(i,1);
             }
            
         /// funkcja wykrywająca kolizje z ekstra elementami
@@ -453,7 +461,7 @@
 
         }
 
-        document.querySelector("#score p").innerHTML =  score;
+        document.querySelector("#score p").innerHTML =  coin;
     }
     ,20);  
  

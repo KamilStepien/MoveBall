@@ -1,3 +1,8 @@
+body{
+  
+    font-family: 'Lato', sans-serif;
+}
+
 ul
 {
     list-style: none;
@@ -5,7 +10,22 @@ ul
     padding: 0;
 }
 
-
+input
+{
+    padding: 7px 10px;
+    border: none;
+    opacity: 0.5;
+    background-color: transparent;
+}
+input:hover
+{
+    
+    box-shadow: 0px 0px 17px 1px rgba(219,212,219,1);
+    background-color: #ebe3eb;
+    font-weight: 400;
+    opacity: 1;
+    transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
 
 p
 {
@@ -31,7 +51,7 @@ body {
 }
 
 
-#Menu 
+#Menu ,#End
 {
     z-index: 300;
     padding: 7px 12px;
@@ -44,7 +64,11 @@ body {
     justify-content: center;
     align-items: center;
 }
-
+#End
+{
+    display: none;
+    flex-direction: column;
+} 
 #Menu input
 {
  margin: 10px;
