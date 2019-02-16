@@ -8,19 +8,40 @@
     <title>Document</title>
 </head>
 <body>
+    <div id = "Program">
+    <div id = "Menu">
+
+        <ul>
+            <li><input type="button" id = "Level1" value="Level 1"></li>
+            <li><input type="button" id = "Level2" value="Level 2"></li>
+        </ul>
+
+    </div>
+    
+    <div id = "WindowElement">
+    <ul>
+            <li><div id="score">Coin :   <p> </p></div></li>
+        <li><div id = "time">Time :  <p> </p></div></li>
+       
+    </ul>
+    </div>
+    <div id = "WindowGame">
+        
+        <canvas id= "can" width= "450" height = "450px" >
+           
+        </canvas>
+        
+    </div>
+    
 
     
-    <canvas id= "can" width= "500px" height = "500px" >
-
-    </canvas>
-
-
+</div>
        
      
 </body>
 <script>
 
-   
+    
 
 
     class ball
@@ -35,35 +56,14 @@
         }  
 
 
-        
-         isColision(entity2) {
-         return !(this.x-this.radius + this.radius*2 < entity2.x ||
-               entity2.x + entity2.width < this.x-this.radius ||
-               this.y-this.radius + this.radius*2 < entity2.y ||
-               entity2.y + entity2.height < this.y-this.radius);
+         isColision(element) {
+             return !(this.x-this.radius + this.radius*2+2 < element.x ||
+             element.x + element.width < this.x-this.radius-2 ||
+               this.y-this.radius + this.radius*2+2 < element.y ||
+               element.y + element.height < this.y-this.radius-2);
         }
 
-        isOverColision(entity2)
-        {
-           return  this.isColision(entity2) && this.y-this.radius + this.radius*2 == entity2.y
-        }
-        isUnderColision(entity2)
-        {
-           return  this.isColision(entity2) && this.y-this.radius  == entity2.y+entity2.height
-        }
-        isLeftColision(entity2)
-        {
-           return  this.isColision(entity2) && this.x-this.radius  == entity2.x+entity2.width
-        }
-        isRightColision(entity2)
-        {
-           return  this.isColision(entity2) && this.x-this.radius + this.radius*2  == entity2.x;
-        }
        
-
-
-        
-
        
     }
 
@@ -71,7 +71,7 @@
     class Element 
     {
         
-        constructor (x , y , height , width ,name)
+        constructor (x , y , height , width ,name ,  color ="rgb(158, 154, 154)", shape = "square" )
         {
             this.x = x;
             this.y = y;
@@ -79,58 +79,133 @@
             this.width = width;
             this.name = name;
             this.active = true;
+            this.color = color;
+            this.shape = shape;
         }
 
          //////////////////////////////////
-        //funkcja odpowiedzialna za rysowanie scian
+        //funkcja odpowiedzialna za rysowanie obiektów np scianu , punkty  ,cxt -element canvasElem.getContext('2d');
          drawElement(ctx)
         {
             if(this.active)
                 {
-                    ctx.beginPath();
-                    ctx.rect(this.x, this.y, this.width, this.height);
-                    ctx.fillStyle = "red";
-                    ctx.fill()
+                    switch(this.shape)
+                    {
+                        case "square":
+                        ctx.beginPath();
+                        ctx.rect(this.x, this.y, this.width-2, this.height-2);
+                        ctx.fillStyle = this.color;
+                        ctx.fill()
+                        break;
+                        case "circle":
+                        ctx.beginPath();
+                        ctx.arc(this.x+this.width/2,this.y+this.width/2,this.width/2,0,Math.PI*2,true);
+                        ctx.fillStyle = this.color;
+                        ctx.fill()
+
+                    }
+                  
                 }
         
 
         }
+         /// funkcja usuwajoca element z canvasa , Element istancja obiektu Element  ,cxt -element canvasElem.getContext('2d');
+          RemoveItem(ctx)
+        {
+            ctx.clearRect(this.x, this.y, this.width, this.height);
+        }
 
     }
-    
-    let output = document.querySelector('.output');  
-   
-
-    ///////////test /?//////////////////
-    //tablica scian 
-    let tabElement = [];
-    tabElement.push(new Element(60,300,100,100 ,"wall"));
-    tabElement.push(new Element(300,300,10,100,"wall"));
-    tabElement.push(new Element(265,0,100,10,"wall"));
-    tabElement.push(new Element(300,0,100,10,"wall"));
-    tabElement.push(new Element(100,100,10,10,"maxSize"));
-    tabElement.push(new Element(100,200,10,10,"minSize"));
     //odwołanie do canvasa
     let canvasElem = document.querySelector('#can');
     let ctx = canvasElem.getContext('2d');
-    
-    for(let i =0  ; i < tabElement.length ; i++)
-    {
-        console.log("rysowanie");
-        tabElement[i].drawElement(ctx);
-    }
-
+    //tablica mapy 1;  // 1 - sciana , 2- punkt , 3-zmiejszanie , 4 zwiekszanie ,
+        
+    let mapa1 = [ [1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [1, 2,2,2,1,2,1,2,2,2,2,2,2,2,1],
+                        [1, 2,1,2,2,2,1,2,1,1,1,1,1,2,1],
+                        [1, 2,1,1,1,1,1,2,2,2,2,2,1,2,1],
+                        [1, 2,2,2,2,2,2,2,1,1,1,1,1,2,1],
+                        [1, 2,1,1,1,1,1,1,1,2,2,2,1,2,1],
+                        [1, 2,2,2,2,2,2,2,2,2,1,2,2,2,1],
+                        [1, 1,2,1,1,1,1,1,1,10,1,1,1,1,1],
+                        [1, 2,2,2,2,2,2,1,1,2,2,2,2,2,1],
+                        [1, 2,1,1,1,1,2,1,1,2,1,1,1,1,1],
+                        [1, 2,1,2,2,1,2,1,2,2,1,2,2,2,1],
+                        [1, 2,2,2,1,1,2,1,1,2,0,0,1,0,1],
+                        [1, 1,1,1,1,1,2,2,1,10,1,1,1,1,1],
+                        [1, 0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                        [1, 0,3,1,0,0,0,0,0,0,0,0,0,4,0],
+                        
+                      ];
    
-    //////////////////////////////!!!!!!!!!!!!!!!!!!!!!!!
+    // czas ////////////////////////////////////////////
+    let timeStart = new Date();
+    //zegar
+    setInterval(()=>
+    {
+        
+        let timeNow  = new Date()
     
-    let Ball = new ball(40,40,10)
+        document.querySelector("#time p").innerHTML = parseInt((timeNow.getTime()-timeStart.getTime())/100) ;
+    },1)
+    ///////////////////////////////////////////////////
+
+
+    
+    
+   
+    /// wywolanie funkcji która tworzy mape 
+  
+    //tablica punktów
+    // 
+    //dodawanie automatycznie punktów na mape
+    //for(let x = 0 ; x<1000 ; x++)
+    //{
+        //tabElement.push(new Element(Math.floor((Math.random() * 370) + 5),Math.floor((Math.random() * 370) + 5),12,12,"coin","yellow","circle"));
+    //}
+
+    //obiekt gracza
+    let Ball = new ball(300,420,8)
+    //zmiene przechowujące polożnie telefonu
     let lastBeta=0;
     let lastGamma=0;
+    // porusznie sie kuli
     let y =0;
     let x =0;
     let moveX =0;
     let moveY =0;
+    //ilość zdobytych punktów
+    let score = 0;
+    //tablica elementow ścian
+    let tabElement = []; 
+    //tablica punktów do zbierania
+    let tabScore = [];
+    //tablica zawierajoca dodatkowe elementy np   zmniejszanie i zwiekszanie kulki
+    let ExtraElement = [];
+
     
+
+           /// wczytanie pierwszego poziomu
+            document.querySelector("#Level1").addEventListener("click", () => {
+
+                
+                CreateMap(mapa1);
+                document.querySelector("#Menu").style.display = "none";
+            })
+
+            ////wczytanie drugiego poziomu
+            document.querySelector("#Level2").addEventListener("click", () => {
+                CreateMap();
+                document.querySelector("#Menu").style.display = "none";
+
+            })
+
+
+
+
+    /// funkcja która odczytuje położenie telefonu
+    let output = document.querySelector('.output');  
     function handleOrientation(event) {
         
         lastBeta =y;
@@ -167,39 +242,115 @@
             }
         }
         
-        //moveX = x/90;
-        
-        //moveY = y/40;
+      
 
     }
+
+
     window.addEventListener('deviceorientation', handleOrientation);
 
 
     //sterowanie za pomocą szczałek - tymczasowe ;
-
+    lastKey = "";
     document.addEventListener("keypress", (e)=>
     {
-        console.log("charcode "+ e.charCode)
+        
         switch(e.keyCode)
         {
-            case 119:moveY =-1; moveX = 0;
+            case 119:if(lastKey!=119)
+            {
+                moveY =-1; 
+                moveX = 0;
+                lastKey=119
+            }
             break;//w
-            case 115:moveY =1; moveX = 0;
+            case 115:if(lastKey!=115)
+            {
+            moveY =1;
+            moveX = 0;
+            lastKey=115;
+            }
+            
             break;//s
-            case 97:moveX =-1; moveY = 0;
+            case 97:if(lastKey!=97)
+            {
+            moveX =-1; 
+            moveY = 0;
+            lastKey=97
+            }
+           
             break;//a
-            case 100:moveX =1; moveY = 0;
+            case 100:if(lastKey!=100)
+            {
+            moveX =1; 
+            moveY = 0;
+            lastKey=100
+            }
+            
             break;//d
         }
         
-
+ 
 
     }
     
     )
 
+    /// funkcja odpowiedzialna z generowanie mapy z tablicy
+    function CreateMap(tab = [] )
+    {
+        tabElement.push(new Element(0,0,5,450 ,"wall"));
+        tabElement.push(new Element(0,0,450,5,"wall"));
+        tabElement.push(new Element(447,0,450,5,"wall"));
+         tabElement.push(new Element(0,447,5,450,"wall"));
+       
+        
 
+        for(let i = 0; i< tab.length ; i++)
+        {
+            for(let j=0 ; j<tab[i].length ; j++)
+            {
 
+                //dodawanie do tablicy obiektów 
+                switch(tab[i][j])
+                {
+                    case 1 :  tabElement.push(new Element(30*j,30*i,30,30 ,"wall"));
+                    break;
+                    case 10 :  tabElement.push(new Element(30*j,30*i,30,12 ,"wall"));
+                    break;
+                    case 2:  tabScore.push(new Element((30*j)+10,(30*i)+10,10,10 ,"coin","yellow","circle"));
+                    break;
+                    case 3: ExtraElement.push(new Element((30*j)+10,(30*i)+10,10,10 ,"zmniejsz","red","circle"));
+                    break;
+                    case 4: ExtraElement.push(new Element((30*j)+10,(30*i)+10,10,10 ,"zwieksz","blue","circle"));
+                    break;
+                    case 5: ExtraElement.push(new Element((30*j)+10,(30*i)+10,10,10 ,"zwieksz","blue","circle"));
+                    break;
+                }
+              
+                
+
+            }
+        }
+
+        //przejscie po całej tablycy i naryskowanie karzdego z obiektów
+        for (let i = 0; i < tabElement.length; i++) {
+            console.log("rysowanie");
+            tabElement[i].drawElement(ctx);
+        }
+        //rysowanie punktów
+        for(let i =0  ; i < tabScore.length ; i++)
+        {
+        tabScore[i].drawElement(ctx);
+        }
+        // rysowanie dodatkowych rzeczy
+        for(let i =0  ; i < ExtraElement.length ; i++)
+        {
+        ExtraElement[i].drawElement(ctx);
+        }
+     
+
+    }
 
     //funkcja odpowiedzialna za przesuwanie i rysowanie kuli 
     function moveBall(_Ball , _moveX , _moveY)
@@ -217,76 +368,95 @@
         ctx.closePath(); 
        
     }  
-    //odpowieada za odpalanie funkcji moveBall co 5 ms , dzieki czemu  piłka porusza się cały czas w odpowiednim kierunku
     
- 
-    
+       
 
-        setInterval(()=> 
+    
+    
+        function isOverColision(ball, canvasData)
         {
-            
-            for(let a = 0 ; a<tabElement.length ; a++) 
-            {
-                console.log(" csadd " +Ball.isColision(tabElement[a]));
-                if(Ball.isColision(tabElement[a]) &&  tabElement[a].name=="wall")
-                {
-                    if(Ball.isOverColision(tabElement[a]))
-                    {
-                        moveBall(Ball,moveX,-Math.abs(moveY))
-                    }
-                    if(Ball.isUnderColision(tabElement[a]))
-                    {
-                        moveBall(Ball,moveX,Math.abs(moveY))
-                    }
-                    if(Ball.isLeftColision(tabElement[a]))
-                    {
-                        moveBall(Ball,Math.abs(moveX),moveY)
-                    }
-                    if(Ball.isRightColision(tabElement[a]))
-                    {
-                        moveBall(Ball,-Math.abs(moveX),moveY)
-                    }
-                }
-                if(Ball.isColision(tabElement[a]) &&  tabElement[a].name=="maxSize" &&tabElement[a].active==true)
-                {
-                   
-                    Ball.radius =20;
-                    tabElement[a].name = "";
-                }
-                if(Ball.isColision(tabElement[a]) &&  tabElement[a].name=="minSize"  &&tabElement[a].active==true)
-                {
-                    ctx.clearRect( Ball.x-Ball.radius-1,Ball.y-Ball.radius-1,Ball.radius*2+2,Ball.radius*2+2);
-                    Ball.radius =10;
-                    tabElement[a].name = "";
-                }
-                
+           return  (canvasData.data[((((ball.y + ball.radius+4) * canvasElem.width) + ball.x-(ball.radius+2))) * 4 + 1] == 154 || canvasData.data[((((ball.y + (ball.radius+4)) * canvasElem.width) + ball.x+(ball.radius+2))) * 4 + 1] == 154);
+        }
+        function isUnderColision(ball,canvasData)
+        {
+           return  (canvasData.data[((((ball.y - (ball.radius+4)) * canvasElem.width) + ball.x-(ball.radius+2))) * 4 + 1] == 154 || canvasData.data[((((ball.y - (ball.radius+4)) * canvasElem.width) + ball.x+(ball.radius+2))) * 4 + 1] == 154)
+        }
+        function isLeftColision(ball,canvasData)
+        {
+           return  (canvasData.data[((((ball.y+(ball.radius+2)) * canvasElem.width) + ball.x - (ball.radius+4))) * 4 + 1] == 154|| canvasData.data[((((ball.y-(ball.radius+2)) * canvasElem.width) + ball.x - (ball.radius+4))) * 4 + 1] == 154)
+        }
+        function isRightColision(ball,canvasData)
+        {
+           return  (canvasData.data[((((ball.y+(ball.radius+2)) * canvasElem.width) + ball.x + ball.radius+4)) * 4 + 1] == 154 || canvasData.data[((((ball.y-(ball.radius+2)) * canvasElem.width) + ball.x + (ball.radius+4))) * 4 + 1] == 154 )
+        }
+    
+    //odpowieada za odpalanie funkcji moveBall co 10 ms , dzieki czemu  piłka porusza się cały czas w odpowiednim kierunku
+    setInterval(()=> 
+    {
+        
+        let canvasData = ctx.getImageData(0, 0, canvasElem.width, canvasElem.height);
+        console.log(canvasData.data[((((Ball.y+12)*canvasElem.width)+Ball.x))*4+1] );
+
+       //funkcja dopowiedzialna za wykrywanie kolizji ze ścianami i blokowanie poruszania się w odpowiednim kierunku
+       if ((isOverColision(Ball,canvasData))||(isUnderColision(Ball,canvasData))||(isLeftColision(Ball,canvasData))||(isRightColision(Ball,canvasData))) {
+            if (isOverColision(Ball,canvasData)) {
+                moveBall(Ball, moveX, -Math.abs(moveY))
+
             }
-            if(!(Ball.isColision(tabElement[0])||Ball.isColision(tabElement[1])||Ball.isColision(tabElement[2])||Ball.isColision(tabElement[3])))
-                 moveBall(Ball,moveX,moveY)
-                
-               
-                
+            if (isUnderColision(Ball,canvasData)) {
+                moveBall(Ball, moveX, Math.abs(moveY))
 
+            }
+            if (isLeftColision(Ball,canvasData)) {
+                moveBall(Ball, Math.abs(moveX), moveY)
 
+            }
+            if (isRightColision(Ball,canvasData)) {
+                moveBall(Ball, -Math.abs(moveX), moveY)
+
+            }
+        }
+        else {
+            moveBall(Ball, moveX, moveY)
+        }
+        
+       //// funkcja wykrywająca kolizje z monetami
+        
+            for(let i =0; i <tabScore.length ; i++)
+            if(Ball.isColision(tabScore[i]))
+            {
+            console.log("score");
+            tabScore[i].RemoveItem(ctx)
+            score++;
+            tabScore.splice(i,1);
+            }
+           
+        /// funkcja wykrywająca kolizje z ekstra elementami
+
+            for (let i = 0; i < ExtraElement.length; i++) {
+            if (Ball.isColision(ExtraElement[i])) {
+                console.log(ExtraElement[i].name);
+                if (ExtraElement[i].name == "zmniejsz") {
+                    Ball.radius  -= 3;
+                    ExtraElement[i].RemoveItem(ctx);
+                    
+                }
+                if (ExtraElement[i].name == "zwieksz") {
+                    Ball.radius += 3;
+                    ExtraElement[i].RemoveItem(ctx);
+                    
+                }
+                
+                ExtraElement.splice(i, 1);
+
+            }
 
         }
-        ,10);  
-            
-        
-    
-           // if(Ball.x + Ball.radius+1 <= tabWall[0].x | Ball.x + Ball.radius+1 >= tabWall[0].x+tabWall[0].width)
-           // {
-          //      moveBall(Ball,moveX,moveY); 
-          //  }
-           // else
-           // moveBall(Ball,0,moveY); 
-            
-        
-         
-            
-            
-           
-        
-    
+
+        document.querySelector("#score p").innerHTML =  score;
+    }
+    ,20);  
+ 
+ 
 </script>
 </html>
