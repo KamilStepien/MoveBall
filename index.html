@@ -23,6 +23,7 @@
 
         <h3>End</h3>
         <p id= "Statistics">Time 10:203 s</p>
+        <input type="button" id = "backToMenu" value="Ok">
 
     </div>
     
@@ -161,7 +162,7 @@
     //tablica mapy 1;  // 1 - sciana , 2- punkt , 3-zmiejszanie , 4 zwiekszanie ,
         
     let mapa1 = [ [1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                        [1, 2,2,2,1,2,1,2,2,2,2,2,2,2,1],
+                        [1, 4,2,2,1,2,1,4,2,2,2,2,2,2,1],
                         [1, 2,1,2,2,2,1,2,1,1,1,1,1,2,1],
                         [1, 2,1,1,1,1,1,2,2,2,2,2,1,2,1],
                         [1, 2,2,2,2,2,2,2,1,1,1,1,1,2,1],
@@ -170,11 +171,11 @@
                         [1, 1,2,1,1,1,1,1,1,10,1,1,1,1,1],
                         [1, 2,2,2,2,2,2,1,1,2,2,2,2,2,1],
                         [1, 2,1,1,1,1,2,1,1,2,1,1,1,1,1],
-                        [1, 2,1,2,2,1,2,1,2,2,1,2,2,2,1],
-                        [1, 2,2,2,1,1,2,1,1,2,0,0,1,0,1],
+                        [1, 2,1,2,3,1,2,1,2,2,1,2,2,2,1],
+                        [1, 2,2,2,1,1,2,1,1,2,2,2,1,2,1],
                         [1, 1,1,1,1,1,2,2,1,10,1,1,1,1,1],
-                        [1, 0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                        [1, 0,3,1,0,0,0,8,8,0,0,0,0,4,0],
+                        [1, 4,2,2,2,2,2,2,2,2,2,2,2,3,1],
+                        [1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1],
                         
                       ];
    
@@ -182,21 +183,8 @@
     let stopWatch = new StopWatch();
     
     ///////////////////////////////////////////////////
-    
 
     
-    
-   
-    /// wywolanie funkcji która tworzy mape 
-  
-    //tablica punktów
-    // 
-    //dodawanie automatycznie punktów na mape
-    //for(let x = 0 ; x<1000 ; x++)
-    //{
-        //tabElement.push(new Element(Math.floor((Math.random() * 370) + 5),Math.floor((Math.random() * 370) + 5),12,12,"coin","yellow","circle"));
-    //}
-
     //obiekt gracza
     let Ball = new ball(300,420,8)
     //zmiene przechowujące polożnie telefonu
@@ -220,28 +208,60 @@
 
            /// wczytanie pierwszego poziomu
             document.querySelector("#Level1").addEventListener("click", () => {
-
+                Ball.x = 300;
+                Ball.y = 405;
+                stopWatch.Reset();
                 stopWatch.Start("#time p");
                 CreateMap(mapa1);
                 document.querySelector("#Menu").style.display = "none";
                 //sprawdzanie czy gracz zdobył wszystkie punkty
-                let dsaw =  setInterval(()=>
+                let setint =  setInterval(()=>
                 {
-                    console.log(tabCoin.length);
+                    
                     if(tabCoin.length==0)
                     {
                         stopWatch.Stop();
+                        
+                        document.querySelector("#Statistics").innerHTML = "Time :" + stopWatch.miliSecond;
                         document.querySelector("#End").style.display = "flex";
-                        clearInterval(dsaw);
+                        clearInterval(setint);
                     }
-                },1000)
+                },1)
             })
 
             ////wczytanie drugiego poziomu
             document.querySelector("#Level2").addEventListener("click", () => {
+                
+                stopWatch.Reset();
+                stopWatch.Start("#time p");
                 CreateMap();
                 document.querySelector("#Menu").style.display = "none";
+                let setint =  setInterval(()=>
+                {
+                    if(stopWatch.miliSecond == 500)
+                    { 
+                        stopWatch.Stop();
+                        document.querySelector("#Statistics").innerHTML = "Coin :" + coin;
+                        document.querySelector("#End").style.display = "flex";
+                        clearInterval(setint);
+                    }
+                    if(tabCoin.length<=5)
+                    {
+                       //losowe dodavanie punktów na mapie
+                        tabCoin.push(new Element(Math.floor((Math.random() * 370) + 5),Math.floor((Math.random() * 370) + 5),12,12,"coin","yellow","circle"));
+                        tabCoin[tabCoin.length-1].drawElement(ctx);     
+                    }
+                    //losowanie liczby
+                    console.log(Math.floor((Math.random() * 10)));
+                    if(Math.floor((Math.random() * 2000)  )== 500)
+                    {
+                        console.log("dodnajdadadwad");
+                       //dodawnie elementu który zwieksza  kulkę 
+                        ExtraElement.push(new Element(Math.floor((Math.random() * 370) + 5),Math.floor((Math.random() * 370) + 5),10,10 ,"zwieksz","blue","circle"));
+                        ExtraElement[ExtraElement.length-1].drawElement(ctx);     
+                    }
 
+                },1)
             })
 
 
@@ -287,10 +307,19 @@
 
 
     }
-
-
+    //reagowanie na zmiane położenia telefonu
     window.addEventListener('deviceorientation', handleOrientation);
 
+    //Funkcaj która po wciśnieciu przycisku wyświetla menu
+    document.querySelector("#backToMenu").addEventListener("click",
+    ()=>
+    {
+
+        //rysowanie mapy
+        CreateMap();
+        document.querySelector("#End").style.display = "none";
+        document.querySelector("#Menu").style.display = "flex";
+    })
 
     //sterowanie za pomocą szczałek - tymczasowe ;
     lastKey = "";
@@ -341,6 +370,15 @@
     /// funkcja odpowiedzialna z generowanie mapy z tablicy
     function CreateMap(tab = [] )
     {
+        //czyszczenie okna canvasa
+        ctx.clearRect(0, 0, canvasElem.width, canvasElem.height);
+        // czyszczenie tablic
+        tabElement = [];
+        tabCoin = []
+        ExtraElement = [];
+
+
+        // obramowanie canvasa
         tabElement.push(new Element(0,0,5,450 ,"wall"));
         tabElement.push(new Element(0,0,450,5,"wall"));
         tabElement.push(new Element(447,0,450,5,"wall"));
@@ -360,7 +398,7 @@
                     break;
                     case 10 :  tabElement.push(new Element(30*j,30*i,30,12 ,"wall"));
                     break;
-                    case 8:  tabCoin.push(new Element((30*j)+10,(30*i)+10,10,10 ,"coin","yellow","circle"));
+                    case 2:  tabCoin.push(new Element((30*j)+10,(30*i)+10,10,10 ,"coin","yellow","circle"));
                     break;
                     case 3: ExtraElement.push(new Element((30*j)+10,(30*i)+10,10,10 ,"zmniejsz","red","circle"));
                     break;
