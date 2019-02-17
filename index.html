@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
     <title>Document</title>
 </head>
 <body>
@@ -13,10 +15,28 @@
     <div id = "Menu">
 
         <ul>
-            <li><input type="button" id = "Level1" value="Level 1"></li>
-            <li><input type="button" id = "Level2" value="Level 2"></li>
+            <li><input type="button" id = "Level1" value="Level 1">
+                <div id="description">Zbierz wszystkie monety w jak najkrótszym czasie </div></li>
+            <li><input type="button" id = "Level2" value="Level 2">
+                <div id="description">Zbierz jak najwiecej monet w 1000ms</div></li>
         </ul>
 
+    </div>
+    <div id="Info">
+        <ul>
+            <li><i class="fas fa-info"></i></li>
+            <li> <div id ="rules">
+                <ul>
+                    <li>Poruszanie kulką za pomocą sensorów telefonu lub WASD</li>
+                    <li class="circle circleYellow" >- monety</li>
+                    <li class="circle circleBlue">- zwiekszanie kulki</li>
+                    <li class="circle circleRed ">-zmniejszanie kulki </li>
+
+                </ul>
+            </div></li>
+            
+        </ul>
+       
     </div>
 
     <div id = "End">
@@ -41,6 +61,7 @@
         </canvas>
         
     </div>
+
     
 
     
@@ -162,7 +183,7 @@
     //tablica mapy 1;  // 1 - sciana , 2- punkt , 3-zmiejszanie , 4 zwiekszanie ,
         
     let mapa1 = [ [1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                        [1, 4,2,2,1,2,1,4,2,2,2,2,2,2,1],
+                        [1, 4,2,2,1,2,1,2,2,2,2,2,2,2,1],
                         [1, 2,1,2,2,2,1,2,1,1,1,1,1,2,1],
                         [1, 2,1,1,1,1,1,2,2,2,2,2,1,2,1],
                         [1, 2,2,2,2,2,2,2,1,1,1,1,1,2,1],
@@ -183,7 +204,7 @@
     let stopWatch = new StopWatch();
     
     ///////////////////////////////////////////////////
-
+   
     
     //obiekt gracza
     let Ball = new ball(300,420,8)
@@ -203,7 +224,8 @@
     let tabCoin= [];
     //tablica zawierajoca dodatkowe elementy np   zmniejszanie i zwiekszanie kulki
     let ExtraElement = [];
-
+    ///
+    CreateMap();
     
 
            /// wczytanie pierwszego poziomu
@@ -221,7 +243,6 @@
                     if(tabCoin.length==0)
                     {
                         stopWatch.Stop();
-                        
                         document.querySelector("#Statistics").innerHTML = "Time :" + stopWatch.miliSecond;
                         document.querySelector("#End").style.display = "flex";
                         clearInterval(setint);
@@ -252,10 +273,8 @@
                         tabCoin[tabCoin.length-1].drawElement(ctx);     
                     }
                     //losowanie liczby
-                    console.log(Math.floor((Math.random() * 10)));
                     if(Math.floor((Math.random() * 2000)  )== 500)
                     {
-                        console.log("dodnajdadadwad");
                        //dodawnie elementu który zwieksza  kulkę 
                         ExtraElement.push(new Element(Math.floor((Math.random() * 370) + 5),Math.floor((Math.random() * 370) + 5),10,10 ,"zwieksz","blue","circle"));
                         ExtraElement[ExtraElement.length-1].drawElement(ctx);     

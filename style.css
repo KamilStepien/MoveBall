@@ -9,6 +9,64 @@ ul
     margin: 0;
     padding: 0;
 }
+ #Info
+{
+    z-index: 10;
+    position: absolute;
+    left: -40px;
+    top: 10px;
+    width: 190px;
+    height: 30px;
+    background-color:white;
+    box-shadow: 0px 0px 15px 1px rgba(219,212,219,1);
+    border-radius: 3px 0px 0px 3px ;
+    padding: 3px 15px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+
+#Info
+{
+    width: 290px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+ #Info>ul
+{
+    display: flex;
+    align-items: center;
+}
+ #Info  li
+{
+    padding-right: 15px;
+}
+
+ #Info i
+{
+    color:  rgb(232, 103, 107);
+    opacity: 0.3;
+    width: 12px;
+}
+
+#Info
+{
+    top: 70px;
+    overflow: hidden;
+}
+
+#Info:hover i
+{
+    opacity: 1;
+    transition: opacity 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+#Info:hover
+{
+    left: -290px;
+    height: 120px;
+    transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
 
 input
 {
@@ -82,13 +140,68 @@ font-size: 18px;
 padding-left: 5px;
 }
 
+.circleRed:before
+{
+    background-color: red;
+}
+.circleYellow:before
+{
+    background-color: yellow;
+}
+.circleBlue:before
+{
+    background-color: blue;
+}
+
+.circle:before
+{
+    content: " ";
+    display: block;
+    width: 10px;
+    height: 10px;
+    margin: 5px;
+    border-radius: 50%;
+    
+}
+#rules li
+{
+    padding: 3px 0 ;
+    display: flex;
+    flex-direction: row;
+}
+
+#Menu li:hover #description
+{
+   height: 100%;
+}
+#Menu li 
+{
+    display:  flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#description
+{
+    text-align: center;
+    width: 120px;
+    height: 0;
+    overflow: hidden;
+    display: flex;
+    justify-items: center;
+    font-size: 12px;
+  
+}
 #WindowGame
 {
+    background-color: white;
     margin-top: 50px;
     display:  flex;
     justify-content: center;
     align-items: center;
     z-index: 100;
+    
 }
 
 #WindowElement
