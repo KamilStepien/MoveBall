@@ -104,19 +104,20 @@
      
     }
 
-
+    
     class ball
     {
 
         constructor (x , y , radius)
         {
+
             this.x = x;
             this.y = y;
             this.radius = radius;
           
         }  
 
-
+        //sprawdznie czy obiekt ball jest w kolizji z element element musi być istacją klasy Element
          isColision(element) {
              return !(this.x-this.radius + this.radius*2+2 < element.x ||
              element.x + element.width < this.x-this.radius-2 ||
@@ -124,7 +125,26 @@
                element.y + element.height < this.y-this.radius-2);
         }
 
-       
+        //sprawdznie czy obiekt ball jest w kolizji z scianą do góry
+        isOverColision( canvasData)
+        {
+           return  (canvasData.data[((((this.y + this.radius+4) * canvasElem.width) + this.x-(this.radius+2))) * 4 + 1] == 154 || canvasData.data[((((this.y + (this.radius+4)) * canvasElem.width) + this.x+(this.radius+2))) * 4 + 1] == 154);
+        }
+          //sprawdznie czy obiekt ball jest w kolizji z scianą do dołu
+         isUnderColision(canvasData)
+        {
+           return  (canvasData.data[((((this.y - (this.radius+4)) * canvasElem.width) + this.x-(this.radius+2))) * 4 + 1] == 154 || canvasData.data[((((this.y - (this.radius+4)) * canvasElem.width) + this.x+(this.radius+2))) * 4 + 1] == 154)
+        }
+          //sprawdznie czy obiekt ball jest w kolizji z scianą do lewej
+         isLeftColision(canvasData)
+        {
+           return  (canvasData.data[((((this.y+(this.radius+2)) * canvasElem.width) + this.x - (this.radius+4))) * 4 + 1] == 154|| canvasData.data[((((this.y-(this.radius+2)) * canvasElem.width) + this.x - (this.radius+4))) * 4 + 1] == 154)
+        }
+          //sprawdznie czy obiekt ball jest w kolizji z scianą do prawej
+         isRightColision(canvasData)
+        {
+           return  (canvasData.data[((((this.y+(this.radius+2)) * canvasElem.width) + this.x + this.radius+4)) * 4 + 1] == 154 || canvasData.data[((((this.y-(this.radius+2)) * canvasElem.width) + this.x + (this.radius+4))) * 4 + 1] == 154 )
+        }
        
     }
 
@@ -230,10 +250,14 @@
 
            /// wczytanie pierwszego poziomu
             document.querySelector("#Level1").addEventListener("click", () => {
+                //ustawienie gracza na mapie
                 Ball.x = 300;
                 Ball.y = 405;
+                //zresetowanie stopera
                 stopWatch.Reset();
+                //przypisanie do stopera pola gdzie będa wyświetlane ms
                 stopWatch.Start("#time p");
+                //tworzenie/rysowanie mapy
                 CreateMap(mapa1);
                 document.querySelector("#Menu").style.display = "none";
                 //sprawdzanie czy gracz zdobył wszystkie punkty
@@ -242,6 +266,7 @@
                     
                     if(tabCoin.length==0)
                     {
+                        //zaczymanie stopera
                         stopWatch.Stop();
                         document.querySelector("#Statistics").innerHTML = "Time :" + stopWatch.miliSecond;
                         document.querySelector("#End").style.display = "flex";
@@ -252,27 +277,32 @@
 
             ////wczytanie drugiego poziomu
             document.querySelector("#Level2").addEventListener("click", () => {
-                
+                //zresetowanie stopera 
                 stopWatch.Reset();
+                //przypisanie do stopera pola gdzie będa wyświetlane ms
                 stopWatch.Start("#time p");
+                 //tworzenie/rysowanie mapy
                 CreateMap();
                 document.querySelector("#Menu").style.display = "none";
                 let setint =  setInterval(()=>
                 {
+                    //sprwadzanie czy minelo juz 500ms
                     if(stopWatch.miliSecond == 500)
                     { 
+                        //zatrzymanie stopera
                         stopWatch.Stop();
                         document.querySelector("#Statistics").innerHTML = "Coin :" + coin;
                         document.querySelector("#End").style.display = "flex";
                         clearInterval(setint);
                     }
+                    //jeśli w tablicy monet jest mniej mniej niż 5 lub 5 elementow dodajemy nowy element
                     if(tabCoin.length<=5)
                     {
                        //losowe dodavanie punktów na mapie
                         tabCoin.push(new Element(Math.floor((Math.random() * 370) + 5),Math.floor((Math.random() * 370) + 5),12,12,"coin","yellow","circle"));
                         tabCoin[tabCoin.length-1].drawElement(ctx);     
                     }
-                    //losowanie liczby
+                    //losowanie liczby ,
                     if(Math.floor((Math.random() * 2000)  )== 500)
                     {
                        //dodawnie elementu który zwieksza  kulkę 
@@ -472,22 +502,6 @@
 
     
     
-        function isOverColision(ball, canvasData)
-        {
-           return  (canvasData.data[((((ball.y + ball.radius+4) * canvasElem.width) + ball.x-(ball.radius+2))) * 4 + 1] == 154 || canvasData.data[((((ball.y + (ball.radius+4)) * canvasElem.width) + ball.x+(ball.radius+2))) * 4 + 1] == 154);
-        }
-        function isUnderColision(ball,canvasData)
-        {
-           return  (canvasData.data[((((ball.y - (ball.radius+4)) * canvasElem.width) + ball.x-(ball.radius+2))) * 4 + 1] == 154 || canvasData.data[((((ball.y - (ball.radius+4)) * canvasElem.width) + ball.x+(ball.radius+2))) * 4 + 1] == 154)
-        }
-        function isLeftColision(ball,canvasData)
-        {
-           return  (canvasData.data[((((ball.y+(ball.radius+2)) * canvasElem.width) + ball.x - (ball.radius+4))) * 4 + 1] == 154|| canvasData.data[((((ball.y-(ball.radius+2)) * canvasElem.width) + ball.x - (ball.radius+4))) * 4 + 1] == 154)
-        }
-        function isRightColision(ball,canvasData)
-        {
-           return  (canvasData.data[((((ball.y+(ball.radius+2)) * canvasElem.width) + ball.x + ball.radius+4)) * 4 + 1] == 154 || canvasData.data[((((ball.y-(ball.radius+2)) * canvasElem.width) + ball.x + (ball.radius+4))) * 4 + 1] == 154 )
-        }
     
     //odpowieada za odpalanie funkcji moveBall co 10 ms , dzieki czemu  piłka porusza się cały czas w odpowiednim kierunku
     setInterval(()=> 
@@ -496,25 +510,30 @@
         let canvasData = ctx.getImageData(0, 0, canvasElem.width, canvasElem.height);
     
        //funkcja dopowiedzialna za wykrywanie kolizji ze ścianami i blokowanie poruszania się w odpowiednim kierunku
-       if ((isOverColision(Ball,canvasData))||(isUnderColision(Ball,canvasData))||(isLeftColision(Ball,canvasData))||(isRightColision(Ball,canvasData))) {
-            if (isOverColision(Ball,canvasData)) {
+       if ((Ball.isOverColision(canvasData))||(Ball.isUnderColision(canvasData))||(Ball.isLeftColision(canvasData))||(Ball.isRightColision(canvasData))) {
+            if (Ball.isOverColision(canvasData)) {
+                //zablokowanie możliwości poruszania sie do góry
                 moveBall(Ball, moveX, -Math.abs(moveY))
 
             }
-            if (isUnderColision(Ball,canvasData)) {
+            if (Ball.isUnderColision(canvasData)) {
+                // zablokowanie możliwości poruszania sie w dół
                 moveBall(Ball, moveX, Math.abs(moveY))
 
             }
-            if (isLeftColision(Ball,canvasData)) {
+            if (Ball.isLeftColision(canvasData)) {
+                //zablowkoanie możliwości poruszania sie w lewo
                 moveBall(Ball, Math.abs(moveX), moveY)
 
             }
-            if (isRightColision(Ball,canvasData)) {
+            if (Ball.isRightColision(canvasData)) {
+                 //zablowkoanie możliwości poruszania sie w prawo
                 moveBall(Ball, -Math.abs(moveX), moveY)
 
             }
         }
         else {
+            //możliwości poruszania sie we wszystkich kierunkach
             moveBall(Ball, moveX, moveY)
         }
         
@@ -523,9 +542,10 @@
             for(let i =0; i <tabCoin.length ; i++)
             if(Ball.isColision(tabCoin[i]))
             {
-            
+            //usuwanie monety z canvasa
             tabCoin[i].RemoveItem(ctx)
             coin++;
+            //usuwanie monety z tabelimonet
             tabCoin.splice(i,1);
             }
            
@@ -536,21 +556,24 @@
                 console.log(ExtraElement[i].name);
                 if (ExtraElement[i].name == "zmniejsz") {
                     Ball.radius  -= 3;
+                      //usuwanie  elementu z canvasa
                     ExtraElement[i].RemoveItem(ctx);
                     
                 }
                 if (ExtraElement[i].name == "zwieksz") {
                     Ball.radius += 3;
+                    //usuwanie  elementu z canvasa
                     ExtraElement[i].RemoveItem(ctx);
                     
                 }
-                
+                //usuwanie  elementu z tabeliEXtraElement
                 ExtraElement.splice(i, 1);
 
             }
 
         }
-
+        
+        
         document.querySelector("#score p").innerHTML =  coin;
     }
     ,20);  
